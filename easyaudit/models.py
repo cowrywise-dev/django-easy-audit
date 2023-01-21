@@ -54,6 +54,7 @@ class CRUDEvent(models.Model):
         return self.DELETE == self.event_type
 
     class Meta:
+        managed = False
         verbose_name = _('CRUD event')
         verbose_name_plural = _('CRUD events')
         ordering = ['-datetime']
@@ -78,6 +79,7 @@ class LoginEvent(models.Model):
     datetime = models.DateTimeField(auto_now_add=True, verbose_name=_('Date time'))
 
     class Meta:
+        managed = False
         verbose_name = _('login event')
         verbose_name_plural = _('login events')
         ordering = ['-datetime']
@@ -94,6 +96,7 @@ class RequestEvent(models.Model):
     datetime = models.DateTimeField(auto_now_add=True, verbose_name=_('Date time'))
 
     class Meta:
+        managed = False
         verbose_name = _('request event')
         verbose_name_plural = _('request events')
         ordering = ['-datetime']
