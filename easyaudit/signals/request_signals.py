@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.contrib.sessions.models import Session
+from user_sessions.models import Session
 from django.core.signals import request_started
 from django.http.cookie import SimpleCookie
 from django.utils import timezone

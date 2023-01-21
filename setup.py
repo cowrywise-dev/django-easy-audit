@@ -15,6 +15,7 @@ setup(
     include_package_data=True,
     install_requires=[
         "beautifulsoup4",
+        "django-user-sessions"
         "django>=2.2,<5.0"
     ],
     python_requires=">=3.5",

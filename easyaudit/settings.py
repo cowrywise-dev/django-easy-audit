@@ -6,7 +6,7 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.sessions.models import Session
+from user_sessions.models import Session
 from django.db.migrations import Migration
 from django.db.migrations.recorder import MigrationRecorder
 
