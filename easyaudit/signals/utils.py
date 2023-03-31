@@ -1,37 +1,27 @@
 import inspect
 
 def caller_name(skip=2):
-    """Get a name of a caller in the format module.class.method
+    """Get the name of the calling function in the format module.class.method.
 
-       `skip` specifies how many levels of stack to skip while getting caller
-       name. skip=1 means "who calls me", skip=2 "who calls my caller" etc.
+    The `skip` parameter specifies how many levels of stack to skip while getting
+    the caller name. `skip=1` means "who calls me", `skip=2` means "who calls my
+    caller" etc.
 
-       An empty string is returned if skipped levels exceed stack height
+    An empty string is returned if the skipped levels exceed the stack height.
     """
     stack = inspect.stack()
     start = 0 + skip
     if len(stack) < start + 1:
-      return ''
-    parentframe = stack[start][0]    
+        return ""
 
-    name = []
-    module = inspect.getmodule(parentframe)
-    # `modname` can be None when frame is executed directly in console
-    # TODO(techtonik): consider using __main__
-    if module:
-        name.append(module.__name__)
-    # detect classname
-    if 'self' in parentframe.f_locals:
-        # I don't know any way to detect call from the object method
-        # XXX: there seems to be no way to detect static method call - it will
-        #      be just a function call
-        name.append(parentframe.f_locals['self'].__class__.__name__)
-    codename = parentframe.f_code.co_name
-    if codename != '<module>':  # top level usually
-        name.append( codename ) # function or a method
+    for i in range(start, len(stack)):
+        frame = stack[i][0]
+        code = frame.f_code
+        if code.co_name != "<listcomp>":
+            module = inspect.getmodule(code)
+            class_name = ""
+            if "self" in frame.f_locals:
+                class_name = frame.f_locals["self"].__class__.__name__
+            return f"{module.__name__}.{class_name}.{code.co_name}"
 
-    ## Avoid circular refs and frame leaks
-    #  https://docs.python.org/2.7/library/inspect.html#the-interpreter-stack
-    del parentframe, stack
-
-    return ".".join(name)
+    return ""
