@@ -20,6 +20,7 @@ from easyaudit.settings import REGISTERED_CLASSES, UNREGISTERED_CLASSES, \
     WATCH_MODEL_EVENTS, CRUD_DIFFERENCE_CALLBACKS, LOGGING_BACKEND, \
     DATABASE_ALIAS
 from easyaudit.utils import get_m2m_field_name, model_delta
+import inspect
 
 logger = logging.getLogger(__name__)
 audit_logger = import_string(LOGGING_BACKEND)()
@@ -66,6 +67,9 @@ def get_current_user_details():
 # signals
 def pre_save(sender, instance, raw, using, update_fields, **kwargs):
     """https://docs.djangoproject.com/es/1.10/ref/signals/#post-save"""
+    
+    calling_function = inspect.currentframe().f_back.f_code.co_name
+
     if raw:
         # Return if loading Fixtures
         return
@@ -119,6 +123,7 @@ def pre_save(sender, instance, raw, using, update_fields, **kwargs):
                                 'user_id': user_id,
                                 'datetime': timezone.now(),
                                 'user_pk_as_string': user_pk_as_string,
+                                'calling_function': calling_function,
                             })
                     except Exception as e:
                         try:
@@ -137,6 +142,9 @@ def pre_save(sender, instance, raw, using, update_fields, **kwargs):
 
 def post_save(sender, instance, created, raw, using, update_fields, **kwargs):
     """https://docs.djangoproject.com/es/1.10/ref/signals/#post-save"""
+    
+    calling_function = inspect.currentframe().f_back.f_code.co_name
+
     if raw:
         # Return if loading Fixtures
         return
@@ -177,7 +185,8 @@ def post_save(sender, instance, created, raw, using, update_fields, **kwargs):
                                 'object_id': instance.pk,
                                 'user_id': user_id,
                                 'datetime': timezone.now(),
-                                'user_pk_as_string': user_pk_as_string
+                                'user_pk_as_string': user_pk_as_string,
+                                'calling_function': calling_function,
                             })
                     except Exception as e:
                         try:
@@ -213,6 +222,8 @@ def _m2m_rev_field_name(model1, model2):
 
 def m2m_changed(sender, instance, action, reverse, model, pk_set, using, **kwargs):
     """https://docs.djangoproject.com/es/1.10/ref/signals/#m2m-changed"""
+
+    calling_function = inspect.currentframe().f_back.f_code.co_name
     try:
         if not should_audit(instance):
             return False
@@ -275,7 +286,8 @@ def m2m_changed(sender, instance, action, reverse, model, pk_set, using, **kwarg
                             'object_id': instance.pk,
                             'user_id': user_id,
                             'datetime': timezone.now(),
-                            'user_pk_as_string': user_pk_as_string
+                            'user_pk_as_string': user_pk_as_string,
+                            'calling_function': calling_function,
                         })
                 except Exception as e:
                     try:
@@ -295,6 +307,8 @@ def m2m_changed(sender, instance, action, reverse, model, pk_set, using, **kwarg
 
 def post_delete(sender, instance, using, **kwargs):
     """https://docs.djangoproject.com/es/1.10/ref/signals/#post-delete"""
+
+    calling_function = inspect.currentframe().f_back.f_code.co_name
     try:
         if not should_audit(instance):
             return False
@@ -322,7 +336,8 @@ def post_delete(sender, instance, using, **kwargs):
                             'object_id': obj_id,
                             'user_id': user_id,
                             'datetime': timezone.now(),
-                            'user_pk_as_string': user_pk_as_string
+                            'user_pk_as_string': user_pk_as_string,
+                            'calling_function': calling_function,
                         })
 
                 except Exception as e:
