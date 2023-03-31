@@ -68,7 +68,7 @@ def get_current_user_details():
 def pre_save(sender, instance, raw, using, update_fields, **kwargs):
     """https://docs.djangoproject.com/es/1.10/ref/signals/#post-save"""
     
-    calling_function = inspect.currentframe().f_back.f_code.co_name
+    calling_function = inspect.stack()[1].function
 
     if raw:
         # Return if loading Fixtures
@@ -143,7 +143,7 @@ def pre_save(sender, instance, raw, using, update_fields, **kwargs):
 def post_save(sender, instance, created, raw, using, update_fields, **kwargs):
     """https://docs.djangoproject.com/es/1.10/ref/signals/#post-save"""
     
-    calling_function = inspect.currentframe().f_back.f_code.co_name
+    calling_function = inspect.stack()[1].function
 
     if raw:
         # Return if loading Fixtures
@@ -223,7 +223,7 @@ def _m2m_rev_field_name(model1, model2):
 def m2m_changed(sender, instance, action, reverse, model, pk_set, using, **kwargs):
     """https://docs.djangoproject.com/es/1.10/ref/signals/#m2m-changed"""
 
-    calling_function = inspect.currentframe().f_back.f_code.co_name
+    calling_function = inspect.stack()[1].function
     try:
         if not should_audit(instance):
             return False
@@ -308,7 +308,7 @@ def m2m_changed(sender, instance, action, reverse, model, pk_set, using, **kwarg
 def post_delete(sender, instance, using, **kwargs):
     """https://docs.djangoproject.com/es/1.10/ref/signals/#post-delete"""
 
-    calling_function = inspect.currentframe().f_back.f_code.co_name
+    calling_function = inspect.stack()[1].function
     try:
         if not should_audit(instance):
             return False
