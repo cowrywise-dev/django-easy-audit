@@ -1,6 +1,6 @@
 import inspect
 
-def caller_name(skip=2):
+def caller_name(skip=4):
     """Get the name of the calling function in the format module.class.method.
 
     The `skip` parameter specifies how many levels of stack to skip while getting
